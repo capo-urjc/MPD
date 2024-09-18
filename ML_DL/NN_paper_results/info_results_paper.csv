@@ -1,0 +1,2 @@
+sq_len_to_train,sq_len_to_predict,model_type,interpolate,device,categorical,mae_list,mse_list,rmse_list
+12,12,model_nn,linear,cuda,False,[tensor(16.8167)],[tensor(541.3984)],[tensor(23.2680)]

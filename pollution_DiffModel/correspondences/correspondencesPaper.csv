@@ -1,0 +1,12 @@
+MAGNITUD,UNIDADES,MINIMO,MAXIMO
+Temp,ºC,-50,100
+Pressure,mbar,0,1000
+Humidity,%,0,100
+SolarRad,W/m²,0,1500
+windSpeed,m/s,0,15
+windDir,º,0,360
+NO2,μg/m³,0,700
+intensidad,0,0,4000
+ocupacion,%,0,100
+carga,%,0,100
+vmed,km/h,0,120
