@@ -1,6 +1,6 @@
-# Pollution-forecasting
+# MPD
 
-Breve descripción del proyecto, qué hace y para qué sirve.
+Meteorological Pollution Dataset
 
 ## Table of contents
 
@@ -14,12 +14,12 @@ Breve descripción del proyecto, qué hace y para qué sirve.
 1. Clone the repository:
 
    ```bash
-   git clone https://github.com/tu-usuario/nombre-del-proyecto.git
+   git clone [https://github.com/capo-urjc/MPD.git](https://github.com/capo-urjc/MPD.git)
 
 2. Navigate to the project directory:
 
    ```bash
-   cd pollution-forecasting
+   cd MPD
 
 3. (Optional) Create and activate a virtual environment:
    ```bash
@@ -39,18 +39,12 @@ The project structure must be as follows:
 pollution-forecasting/  
 ├── folder_structure.py  
 ├── ML_DL/  
-│   ├── correspondences/  
-│   │   ├── correspondences.csv  
-│   │   └── correspondencesPaper.csv  
+│   ├── correspondences/...   
 │   ├── DATA/  
 │   │   ├── 2022_24.csv  
 │   │   └── 2023_24.csv  
-│   ├── datasets/  
-│   │   ├── FastPollutionDataset.py  
-│   │   └── PaperDataset.py  
-│   ├── Mad_Station/  
-│   │   ├── Mad_Station_2019.csv  
-│   │   └── Mad_Station_2022.csv  
+│   ├── datasets/...   
+│   ├── Mad_Station/...   
 │   ├── methods_paper/  
 │   │   ├── infer_models_paper.py  
 │   │   ├── ML_paper.py  
@@ -65,65 +59,18 @@ pollution-forecasting/
 │   │   ├── inference_nn.py  
 │   │   ├── train_functions.py  
 │   │   └── train_nn.py  
-│   ├── utils/  
-│   │   ├── cast_to_precision.py  
-│   │   ├── generic_utils.py  
-│   │   ├── metrics_utils.py  
-│   │   ├── normalize.py  
-│   │   ├── os_utils.py  
-│   │   ├── scikit_utils.py  
-│   │   └── torch_utils.py  
-│   └── utils_os/  
-│       ├── models_saver.py  
-│       └── results_saver.py  
+│   ├── utils/...   
+│   └── utils_os/...   
 ├── pollution_DiffModel/  
 │   ├── config/  
 │   │   └── NO2.py  
-│   ├── correspondences/  
-│   │   ├── correspondences.csv  
-│   │   └── correspondencesPaper.csv  
+│   ├── correspondences/...   
 │   ├── DATA/  
 │   │   ├── 2022_24.csv  
 │   │   └── 2023_24.csv  
-│   ├── dataloaders/  
-│   │   ├── DiffusionDataloader.py  
-│   │   ├── DiffusionPollutionDataset.py  
-│   │   └── PaperDataset.py  
-│   ├── diffuser/  
-│   │   ├── datasets/  
-│   │   │   ├── buffer.py  
-│   │   │   ├── d4rl.py  
-│   │   │   ├── normalization.py  
-│   │   │   ├── preprocessing.py  
-│   │   │   └── sequence.py  
-│   │   ├── models/  
-│   │   │   ├── diffusion.py  
-│   │   │   ├── helpers.py  
-│   │   │   └── temporal.py  
-│   │   ├── sampling/  
-│   │   │   ├── functions.py  
-│   │   │   ├── guides.py  
-│   │   │   └── policies.py  
-│   │   └── utils/  
-│   │       ├── arrays.py  
-│   │       ├── cloud.py  
-│   │       ├── colab.py  
-│   │       ├── config.py  
-│   │       ├── git_utils.py  
-│   │       ├── iql.py  
-│   │       ├── logger.py  
-│   │       ├── progress.py  
-│   │       ├── serialization.py  
-│   │       ├── setup.py  
-│   │       ├── tap.py  
-│   │       ├── timer.py  
-│   │       ├── training.py  
-│   │       ├── transformations.py  
-│   │       ├── typing_inspect.py  
-│   │       └── video.py  
-│   ├── Mad_Station/  
-│   │   ├── Mad_Station_2019.csv  
-│   │   └── Mad_Station_2022.csv  
+│   ├── dataloaders/...   
+│   ├── diffuser/...   
+│   ├── Mad_Station/...  
 │   ├── scripts/  
 │   │   ├── generate_NO2_curves.py  
 │   │   ├── launch_train.sh  
@@ -170,3 +117,6 @@ For each of the contaminants, the list of valid locations appears below
 | Benzene                  | 30   |(16, 1), (47, 2), (58, 4), (6, 4)|
 | Total hydrocarbons       | 42   |(16, 1), (47, 2), (58, 4), (6, 4)|
 | Non-methane hydrocarbons | 44   |(16, 1), (47, 2), (58, 4), (6, 4)|
+
+![sensores-ayto](https://github.com/user-attachments/assets/3e6e485a-2b17-459f-a1a0-bf1bb1140363)
+
