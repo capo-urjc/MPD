@@ -20,9 +20,9 @@ class Parser(utils.ParserNO2): # TODO: change name of utils.ParserNO2 to Parser 
     # path_correspondences: str = "../correspondences/correspondencesPaper.csv"
 
     # # OUR DATA
-    test_path: str = "../DATA/2023_24.csv"
-    train_path: str = "../DATA/2022_24.csv"
-    path_correspondences: str = "../correspondences/correspondences.csv"
+    test_path: str = "/raid/code/aabalo/MPD/ML_DL_models/DATA/2023_24.csv"
+    train_path: str = "/raid/code/aabalo/MPD/ML_DL_models/DATA/2022_24.csv"
+    path_correspondences: str = "/raid/code/aabalo/MPD/ML_DL_models/correspondences/correspondences.csv"
 
 # --loader datasets.GoalDataset / datasets.SequenceDataset
 

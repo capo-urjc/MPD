@@ -22,8 +22,8 @@ base = {
         # 'test_path': "../Mad_Station/Mad_Station_2022.csv",
         # 'train_path': "../Mad_Station/Mad_Station_2019.csv",
 
-        'test_path': "../DATA/2023_24.csv",
-        'train_path': "../DATA/2022_24.csv",
+        'test_path': "/raid/code/aabalo/MPD/ML_DL_models/DATA/2023_24.csv",
+        'train_path': "/raid/code/aabalo/MPD/ML_DL_models/DATA/2022_24.csv",
 
         ## model
         'model': 'models.TemporalUnet',
@@ -81,8 +81,8 @@ base = {
         # 'test_path': "../Mad_Station/Mad_Station_2022.csv",
         # 'train_path': "../Mad_Station/Mad_Station_2019.csv",
 
-        'test_path': "../DATA/2023_24.csv",
-        'train_path': "../DATA/2022_24.csv",
+        'test_path': "/raid/code/aabalo/MPD/ML_DL_models/DATA/2023_24.csv",
+        'train_path': "/raid/code/aabalo/MPD/ML_DL_models/DATA/2022_24.csv",
 
         # 'guide': 'sampling.ValueGuide',
         'policy': 'sampling.DiffPolicy',
@@ -115,7 +115,7 @@ base = {
         'discount': 0.997,
 
         ## loading
-        'diffusion_loadpath': 'f:diffusion/defaults_H{horizon}_T{n_diffusion_steps}/2024-09-17:09-29',
+        'diffusion_loadpath': 'f:diffusion/defaults_H{horizon}_T{n_diffusion_steps}/2024-11-21:12-08',
 
         'diffusion_epoch': 'latest',
 
