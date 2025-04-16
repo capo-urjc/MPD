@@ -4,7 +4,7 @@ os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"
 os.environ["CUDA_VISIBLE_DEVICES"] = "2"
 
 import argparse
-from datasets.FastPollutionDataset import FastTemporalPollutionDataset
+from datasets.FastPollutionDataset2 import FastTemporalPollutionDataset
 from train_functions import train
 import torch
 from torch.utils.data import DataLoader
@@ -26,10 +26,10 @@ def main():
     parser.add_argument('--batch_size', default=32, help='Batch size')
     parser.add_argument('--loss', default='l1', help='Loss function')
     parser.add_argument('--optimizer', default='adam', help='Optimizer')
-    parser.add_argument('--magnitudes_to_train', default=[14, 81, 82, 83, 86, 87, 88], help='Magnitudes to train')
-    parser.add_argument('--magnitudes_to_predict', default=[14], help='Magnitudes to predict')
-    parser.add_argument('--locations_to_train', default=[(120, 1)], help='Locations to train')
-    parser.add_argument('--locations_to_predict', default=[(120, 1)], help='Locations to predict')
+    parser.add_argument('--magnitudes_to_train', default=[44, 81, 82, 83, 86, 87, 88], help='Magnitudes to train')
+    parser.add_argument('--magnitudes_to_predict', default=[44], help='Magnitudes to predict')
+    parser.add_argument('--locations_to_train', default=[(16, 1), (47, 2), (58, 4), (6, 4)], help='Locations to train')
+    parser.add_argument('--locations_to_predict', default=[(16, 1), (47, 2), (58, 4), (6, 4)], help='Locations to predict')
     parser.add_argument('--sq_len_to_train', default=12, help='Sequence length to train')
     parser.add_argument('--sq_len_to_predict', default=12, help='Sequence length to predict')
     parser.add_argument('--model_type', default='model1', help='Model type')
@@ -87,7 +87,7 @@ def main():
 
     print("Training...")
 
-    input_dim = (len(args.magnitudes_to_train) + 2) * args.sq_len_to_train * len(args.locations_to_train)
+    input_dim = (len(args.magnitudes_to_train) + 4) * args.sq_len_to_train * len(args.locations_to_train)
     output_dim = (len(args.magnitudes_to_predict) + 2) * args.sq_len_to_predict * len(args.locations_to_predict)
 
     model = get_nn_model(model_type=args.model_type, input_dim=input_dim, hidden_dim=512, output_dim=output_dim,

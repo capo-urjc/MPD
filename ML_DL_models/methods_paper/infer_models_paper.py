@@ -20,13 +20,14 @@ def compute_metrics_per_magnitude_nn_paper(predictions: np.ndarray, labels: np.n
 
     n_magnitudes: int = 1
 
-    predictions_tensor_form: np.ndarray = predictions.reshape(180 * 24 - 1, n_locs, n_times_predict, n_magnitudes) # TODO: arreglar los numeritos
-
+    predictions_tensor_form: np.ndarray = predictions.reshape(180 * 24 - 1, n_locs, n_times_predict, n_magnitudes)
     labels_tensor_form = labels.reshape(180 * 24 - 1, n_locs, n_times_predict, n_magnitudes)
 
     mae_list: list = []
     mse_list: list = []
     rmse_list: list = []
+    r_list: list = []
+    relative_error_list: list = []
 
     for j, column in enumerate(columns):
         if column in correspondences["MAGNITUD"]:
@@ -44,28 +45,30 @@ def compute_metrics_per_magnitude_nn_paper(predictions: np.ndarray, labels: np.n
             mae = np.abs(preds[..., j] - labls[..., j]).mean()
             mse = ((preds[..., j] - labls[..., j])**2).mean()
 
+            # R coeff
+            numerator = np.sum((labls[..., j] - labls[..., j].mean()) * (preds[..., j] - preds[..., j].mean()))
+            denominator = np.sqrt(np.sum((labls[..., j] - labls[..., j].mean()) ** 2) * np.sum(
+                (preds[..., j] - preds[..., j].mean()) ** 2))
+            r = numerator / denominator if denominator != 0 else 0
+
+            relative_error = np.where(labls[..., j] != 0, np.abs((preds[..., j] - labls[..., j]) / labls[..., j]), 0)
+            mean_relative_error = relative_error.mean()
+
             rmse = np.sqrt(mse)
             print(f"MAE for magnitude {column} is {mae}")
             print(f"MSE for magnitude {column} is {mse}")
             print(f"RMSE for magnitude {column} is {rmse}")
-
-            mae = MAE(torch.from_numpy(preds[..., j]), torch.from_numpy(labls[..., j]))
-            mse = MSE(torch.from_numpy(preds[..., j]), torch.from_numpy(labls[..., j]))
-            rmse = np.sqrt(mse)
-
-            print(100*'-')
-
-            print(f"MAE for magnitude {column} is {mae}")
-            print(f"MSE for magnitude {column} is {mse}")
-            print(f"RMSE for magnitude {column} is {rmse}")
+            print(f"R for magnitude {column} is {r}")
+            print(f"RMEAN for magnitude {column} is {mean_relative_error}")
 
             mae_list.append(mae)
             mse_list.append(mse)
             rmse_list.append(rmse)
-
+            r_list.append(r)
+            relative_error_list.append(mean_relative_error)
         break
 
-    return mae_list, mse_list, rmse_list
+    return mae_list, mse_list, rmse_list, r, mean_relative_error
 
 
 def test(path_csv_test: str, path_correspondences: str, path_model: str, sq_len_to_train: int,
@@ -130,13 +133,13 @@ def inference(path_csv_test: str, model, test_dataloader, n_locs, dict_correspon
     print(all_predictions.shape)
     print(all_labels.shape)
 
-    mae_list, mse_list, rmse_list = compute_metrics_per_magnitude_nn_paper(predictions=all_predictions,
-                                                                           columns=columns,
-                                                                           labels=all_labels,
-                                                                           n_locs=n_locs,
-                                                                           n_times_predict=args.sq_len_to_predict,
-                                                                           correspondences=dict_correspondences
-                                                                           )
+    mae_list, mse_list, rmse_list, r, mare = compute_metrics_per_magnitude_nn_paper(predictions=all_predictions,
+                                                                                    columns=columns,
+                                                                                    labels=all_labels,
+                                                                                    n_locs=n_locs,
+                                                                                    n_times_predict=args.sq_len_to_predict,
+                                                                                    correspondences=dict_correspondences
+                                                                                    )
 
     args_results: dict = {"mae_list": mae_list, "mse_list": mse_list, "rmse_list": rmse_list}
 
@@ -158,7 +161,7 @@ if __name__ == "__main__":
     # parser.add_argument('--batch_size', default=8, help='Batch size')
     parser.add_argument('--sq_len_to_train', default=12, help='Sequence length to train')
     parser.add_argument('--sq_len_to_predict', default=12, help='Sequence length to predict')
-    parser.add_argument('--model_type', default="model_nn", help='Model type')
+    parser.add_argument('--model_type', default="model1", help='Model type')
     parser.add_argument('--interpolate', default="linear", help='Way to interpolate')
     parser.add_argument('--device', default="cuda", help='Device')
     parser.add_argument('--categorical', default=False, help='Categorical variable for windDir')
@@ -168,10 +171,10 @@ if __name__ == "__main__":
 
     args_dict: dict = vars(args)
 
-    path_csv_test: str = "../Mad_Station/Mad_Station_2022.csv"
+    path_csv_test: str = "../DATA/Mad_Station_2022.csv"
     path_correspondences: str = "../correspondences/correspondencesPaper.csv"
 
-    path_model: str = "../logs/PaperDatasigm_250_32_1e-06_l1_adam_12_12_model_nn_linear_False_cuda/version_1/checkpoints/epoch-8.pth"
+    path_model: str = "/raid/code/aabalo/MPD/ML_DL_models/logs/PaperData_200_32_0.0001_l1_adam_12_12_model1_linear_False_cuda/version_1/checkpoints/epoch-199.pth"
 
     main(path_csv_test=path_csv_test,
          path_correspondences=path_correspondences,

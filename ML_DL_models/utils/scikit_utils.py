@@ -57,7 +57,7 @@ def get_ml_model(model_type: str):
     elif model_type == "linear":
         model = LinearRegression()
     elif model_type == "tweedie":
-        model = MultiOutputRegressor(TweedieRegressor(alpha=0.01, max_iter=500))
+        model = MultiOutputRegressor(TweedieRegressor(alpha=0.01, max_iter=800))
     elif model_type == "xgb":
         model = XGBRegressor(n_estimators=90, max_depth=2, learning_rate=0.05, objective="reg:absoluteerror", gamma=0)
     elif model_type == "rf":

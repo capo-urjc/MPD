@@ -16,15 +16,15 @@ from utils.torch_utils import get_loss, get_opt, get_transforms
 def main():
 
     parser = argparse.ArgumentParser(description='Description of my script')
-    parser.add_argument('--dataset', default='PaperDatasigm', help='Data')
-    parser.add_argument('--num_epochs', default=250, help='Number of epochs')
+    parser.add_argument('--dataset', default='PaperData', help='Data')
+    parser.add_argument('--num_epochs', default=200, help='Number of epochs')
     parser.add_argument('--batch_size', default=32, help='Batch size')
-    parser.add_argument('--lr', default=0.000001, help='Learning rate')
+    parser.add_argument('--lr', default=0.0001, help='Learning rate')
     parser.add_argument('--loss', default='l1', help='Loss function')
     parser.add_argument('--optimizer', default='adam', help='Optimizer')
     parser.add_argument('--sq_len_to_train', default=12, help='Sequence length to train')
     parser.add_argument('--sq_len_to_predict', default=12, help='Sequence length to predict')
-    parser.add_argument('--model_type', default='model_nn', help='Model type')
+    parser.add_argument('--model_type', default='model1', help='Model type')
     parser.add_argument('--interpolate', default='linear', help='Way to interpolate')
     parser.add_argument('--categorical', default=False, help='Categorical variable for windDir')
     parser.add_argument('--device', default='cuda', help='Device')
@@ -34,8 +34,8 @@ def main():
 
     args_dict: dict = vars(args)
 
-    path_csv: str = "../Mad_Station/Mad_Station_2019.csv"
-    path_csv_test: str = "../Mad_Station/Mad_Station_2022.csv"
+    path_csv: str = "../DATA/Mad_Station_2019.csv"
+    path_csv_test: str = "../DATA/Mad_Station_2022.csv"
 
     path_correspondences: str = "../correspondences/correspondencesPaper.csv"
     dict_correspondences: dict = load_correspondences(path_correspondences)

@@ -13,13 +13,15 @@ def compute_metrics_per_magnitude_nn_paper(predictions: np.ndarray, labels: np.n
 
     n_magnitudes: int = 1
 
-    predictions_tensor_form: np.ndarray = predictions.reshape(180 * 24 - 1, n_locs, n_times_predict, n_magnitudes)  # TODO: arreglar los numeritos
+    predictions_tensor_form: np.ndarray = predictions.reshape(180 * 24 - 1, n_locs, n_times_predict, n_magnitudes)[..., 0]
 
-    labels_tensor_form = labels.reshape(180 * 24 - 1, n_locs, n_times_predict, n_magnitudes)
+    labels_tensor_form = labels.reshape(180 * 24 - 1, n_locs, n_times_predict, n_magnitudes)[..., 0]
 
     mae_list: list = []
     mse_list: list = []
     rmse_list: list = []
+    r_list: list = []
+    relative_error_list: list = []
 
     for j, column in enumerate(columns):
         if column in correspondences["MAGNITUD"]:
@@ -28,27 +30,40 @@ def compute_metrics_per_magnitude_nn_paper(predictions: np.ndarray, labels: np.n
             max_value: float = correspondences["MAXIMO"][idx]
             min_value: float = correspondences["MINIMO"][idx]
 
+            # [0, 1]
+
             preds = predictions_tensor_form * (max_value - min_value) + min_value
             labls = labels_tensor_form * (max_value - min_value) + min_value
 
+            #[-1, 1]
+            # preds = (predictions_tensor_form[:, :, :, j] + 1) * (max_value - min_value) / 2 + min_value
+            # labls = (labels_tensor_form[:, :, :, j] + 1) * (max_value - min_value) / 2 + min_value
 
-            MAE: torchmetrics = torchmetrics.MeanAbsoluteError()
-            MSE: torchmetrics = torchmetrics.MeanSquaredError()
+            mae = np.abs(preds - labls).mean()
+            mse = ((preds - labls)**2).mean()
 
-            mae = np.abs(preds[..., j] - labls[..., j]).mean()
-            mse = ((preds[..., j] - labls[..., j])**2).mean()
+            # R coeff
+            numerator = np.sum((labls - labls.mean()) * (preds - preds.mean()))
+            denominator = np.sqrt(np.sum((labls - labls.mean()) ** 2) * np.sum((preds - preds.mean()) ** 2))
+            r = numerator / denominator if denominator != 0 else 0
+
+            relative_error = np.where(labls != 0, np.abs((preds - labls) / labls), 0)
+            mean_relative_error = relative_error.mean()
 
             rmse = np.sqrt(mse)
             print(f"MAE for magnitude {column} is {mae}")
             print(f"MSE for magnitude {column} is {mse}")
             print(f"RMSE for magnitude {column} is {rmse}")
-
+            print(f"R for magnitude {column} is {r}")
+            print(f"RMEAN for magnitude {column} is {mean_relative_error}")
 
             mae_list.append(mae)
             mse_list.append(mse)
             rmse_list.append(rmse)
+            r_list.append(r)
+            relative_error_list.append(mean_relative_error)
 
-    return mae_list, mse_list, rmse_list
+    return mae_list, mse_list, rmse_list, r_list, relative_error_list
 
 
 def main():
@@ -56,7 +71,7 @@ def main():
     parser = argparse.ArgumentParser(description='Description of my script')
     parser.add_argument('--sq_len_to_train', default=12, help='Sequence length to train')
     parser.add_argument('--sq_len_to_predict', default=12, help='Sequence length to predict')
-    parser.add_argument('--model_type', default="tweedie", help='Model type')
+    parser.add_argument('--model_type', default="rf", help='Model type')
     parser.add_argument('--interpolate', default="linear", help='Way to interpolate')
     parser.add_argument('--categorical', default=False, help='Categorical variable for windDir')
 
@@ -65,8 +80,8 @@ def main():
 
     args_dict: dict = vars(args)
 
-    path_csv: str = "../Mad_Station/Mad_Station_2019.csv"
-    path_csv_test: str = "../Mad_Station/Mad_Station_2022.csv"
+    path_csv: str = "../DATA/Mad_Station_2019.csv"
+    path_csv_test: str = "../DATA/Mad_Station_2022.csv"
 
     path_correspondences: str = "../correspondences/correspondencesPaper.csv"
     dict_correspondences: dict = load_correspondences(path_correspondences)
@@ -95,8 +110,7 @@ def main():
 
     print("Trained")
 
-    model_name_2_save: str = args.model_type + '-' + init_time
-
+    # model_name_2_save: str = args.model_type + '-' + init_time
 
     ## TEST
     tpd_test = PaperDataset(path=path_csv_test,
@@ -115,27 +129,24 @@ def main():
 
     final_time: str = datetime.now().strftime('%Y-%m-%d_%H:%M:%S')
 
-    print("Prediction:", predictions[0], "\n- Label:", labels_test[0])
-    print()
-
     csv_test = pd.read_csv(path_csv_test)
     columns = csv_test.columns
 
-    # np.save("preds1.npy", np.array(predictions))
-    # np.save("labls1.npy", np.array(labels_test))
+    # np.save("/raid/code/aabalo/MPD/ML_DL_models/predictions_folder/paper_preds_svm.npy", np.array(predictions))
+    # np.save("/raid/code/aabalo/MPD/ML_DL_models/predictions_folder/paper_labls_svm.npy", np.array(labels_test))
 
-    mae_list, mse_list, rmse_list, _, _ = compute_metrics_per_magnitude_nn_paper(predictions=np.array(predictions),
-                                                                                 labels=np.array(labels_test),
-                                                                                 n_locs=n_locs,
-                                                                                 n_times_predict=args.sq_len_to_predict,
-                                                                                 correspondences=dict_correspondences,
-                                                                                 columns=columns
-                                                                                 )
+    mae_list, mse_list, rmse_list, r2, mean_rel_err, _, _ = compute_metrics_per_magnitude_nn_paper(predictions=np.array(predictions),
+                                                                                                   labels=np.array(labels_test),
+                                                                                                   n_locs=n_locs,
+                                                                                                   n_times_predict=args.sq_len_to_predict,
+                                                                                                   correspondences=dict_correspondences,
+                                                                                                   columns=["NO2"]
+                                                                                                   )
 
-    args_results: dict = {"mae_list": mae_list, "mse_list": mse_list, "rmse_list": rmse_list, "init_time": init_time,
-                          "final_time": final_time}
+    args_results: dict = {"mae_list": mae_list, "mse_list": mse_list, "rmse_list": rmse_list, "r2": r2,
+                          "mean_rel_error": mean_rel_err, "init_time": init_time, "final_time": final_time}
 
-    # results_saver(folder="../ML_results/", name_csv="info_results.csv",
+    # results_saver(folder="../ML_results/", name_csv="paper_ML_results.csv",
     #               extra_columns=["mae_list", "mse_list", "rmse_list", "init_time", "final_time"], args_dict=args_dict,
     #               args_results=args_results, nn=False)
 
