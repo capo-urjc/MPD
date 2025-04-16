@@ -1,21 +1,21 @@
 import argparse
-from datasets.FastPollutionDataset import FastTemporalPollutionDataset
+from datasets.FastPollutionDataset2 import FastTemporalPollutionDataset
 from datetime import datetime
+import numpy as np
 from utils_os.results_saver import results_saver
 from utils.generic_utils import load_correspondences
 from utils.metrics_utils import compute_metrics_per_magnitude
 from utils.scikit_utils import get_ml_model, prepare_data_2_numpy
 
-
 def main():
     parser = argparse.ArgumentParser(description='Description of my script')
-    parser.add_argument('--magnitudes_to_train', default='[44, 81, 82, 83, 86, 87, 88]', help='Magnitudes to train')
-    parser.add_argument('--magnitudes_to_predict', default='[44]', help='Magnitudes to predict')
-    parser.add_argument('--locations_to_train', default='[(16, 1)]', help='Locations to train')
-    parser.add_argument('--locations_to_predict', default='[(16, 1)]', help='Locations to predict')
+    parser.add_argument('--magnitudes_to_train', default='[20, 81, 82, 83, 86, 87, 88]', help='Magnitudes to train')
+    parser.add_argument('--magnitudes_to_predict', default='[20]', help='Magnitudes to predict')
+    parser.add_argument('--locations_to_train', default='[(16, 1), (47, 2), (58, 4), (6, 4)]', help='Locations to train')
+    parser.add_argument('--locations_to_predict', default='[(16, 1), (47, 2), (58, 4), (6, 4)]', help='Locations to predict')
     parser.add_argument('--sq_len_to_train', default=12, help='Sequence length to train')
     parser.add_argument('--sq_len_to_predict', default=12, help='Sequence length to predict')
-    parser.add_argument('--model_type', default="tweedie", help='Model type')
+    parser.add_argument('--model_type', default="rf", help='Model type')
     parser.add_argument('--interpolate', default="linear", help='Way to interpolate')
 
     args = parser.parse_args()
@@ -66,7 +66,7 @@ def main():
                                             transform=None
                                             )
 
-    data_, labels_, i = prepare_data_2_numpy(tpd, shuffle=True)
+    data_, labels_, i = prepare_data_2_numpy(tpd, shuffle=False)
 
     print("Training...")
     init_time: str = datetime.now().strftime('%Y-%m-%d_%H:%M:%S')
@@ -76,30 +76,32 @@ def main():
 
     print("Trained")
 
-
     ## TEST
     data_test, labels_test, i = prepare_data_2_numpy(tpd_test, shuffle=False)
 
     predictions = model.predict(data_test)
 
+    np.save("../predictions_folder/preds_" + str(args.magnitudes_to_predict[0]) + "_" + args.model_type + ".npy", np.array(predictions))
+    np.save("../predictions_folder/labls_" + str(args.magnitudes_to_predict[0]) + "_" + args.model_type + ".npy", np.array(labels_test))
+
     final_time: str = datetime.now().strftime('%Y-%m-%d_%H:%M:%S')
 
-    mae_list, mse_list, rmse_list, _, _ = compute_metrics_per_magnitude(predictions=predictions,
-                                                                        labels=labels_test,
-                                                                        i=i + 1,
-                                                                        batch_size=batch_size,
-                                                                        n_locs=n_locs,
-                                                                        n_times_predict=args.sq_len_to_predict,
-                                                                        magnitudes_to_predict=args.magnitudes_to_predict,
-                                                                        correspondences=dict_correspondences
-                                                                        )
+    mae_list, mse_list, rmse_list, r_list, relative_error, _, _ = compute_metrics_per_magnitude(predictions=predictions,
+                                                                                                labels=labels_test,
+                                                                                                i=i + 1,
+                                                                                                batch_size=batch_size,
+                                                                                                n_locs=n_locs,
+                                                                                                n_times_predict=args.sq_len_to_predict,
+                                                                                                magnitudes_to_predict=args.magnitudes_to_predict,
+                                                                                                correspondences=dict_correspondences
+                                                                                                )
 
-    args_results: dict = {"mae_list": mae_list, "mse_list": mse_list, "rmse_list": rmse_list, "init_time": init_time,
-                          "final_time": final_time}
+    args_results: dict = {"mae_list": mae_list, "mse_list": mse_list, "rmse_list": rmse_list, "r_list": r_list,
+                          "relative_error": relative_error, "init_time": init_time, "final_time": final_time}
 
-    results_saver(folder="../ML_results/", name_csv="info_results.csv",
-                  extra_columns=["mae_list", "mse_list", "rmse_list", "init_time", "final_time"], args_dict=args_dict,
-                  args_results=args_results, nn=False)
+    # results_saver(folder="../ML_results/", name_csv="info_results_final.csv",
+    #              extra_columns=["mae_list", "mse_list", "rmse_list", "r_list", "relative_error", "init_time", "final_time"],
+    #              args_dict=args_dict, args_results=args_results, nn=False)
 
 
 if __name__ == "__main__":
