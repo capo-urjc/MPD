@@ -12,7 +12,8 @@ Meteorological Pollution Dataset
 - [Instalation](#instalation)
 - [Structure](#Structure)
 - [Usage](#usage)
-- [Licencia](#licencia)
+- [License](#license)
+- [Citation](#citation)
 
 ## Instalation
 
@@ -125,3 +126,17 @@ For each of the contaminants, the list of valid locations appears below
 
 ![sensores-ayto](https://github.com/user-attachments/assets/3e6e485a-2b17-459f-a1a0-bf1bb1140363)
 
+
+
+## Citation
+```bibtex 
+@ARTICLE{10908821,
+  author={Abalo-García, Alejandra and Hernández-García, Sergio and Ramírez, Iván and Schiavi, Emanuele},
+  journal={IEEE Access}, 
+  title={MPD: A Meteorological and Pollution Dataset: A Comprehensive Study of Machine and Deep Learning Methods for Air Pollution Forecasting}, 
+  year={2025},
+  volume={13},
+  number={},
+  pages={41282-41299},
+  keywords={Hidden Markov models;Atmospheric modeling;Predictive models;Europe;Urban areas;Air pollution;Indexes;Nitrogen;Deep learning;Data models;Air quality prediction;deep learning;machine learning;neural networks;pollution prediction},
+  doi={10.1109/ACCESS.2025.3547038}}
