@@ -1,4 +1,7 @@
 <img src="https://github.com/user-attachments/assets/53b39e41-0230-4d47-a404-f2daa143b3cd" alt="URJCLOG JPG-removebg-preview" width="20%">
+<a href="https://ieeexplore.ieee.org/document/10908821" target="_blank">
+    <img src="https://img.shields.io/badge/View%20Paper-DOI-blue?style=for-the-badge&logo=IEEE" alt="View Paper DOI">
+  </a>
 
 # MPD
 
